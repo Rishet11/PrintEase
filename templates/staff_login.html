@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Login - PrintEase</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔒 Staff Access</h1>
+            <p>Enter PIN to continue</p>
+        </header>
+
+        <section class="step active">
+            <div class="pin-entry">
+                <input type="password" id="pin" placeholder="Enter PIN" inputmode="numeric" pattern="[0-9]*" maxlength="6" autofocus>
+                <button class="btn btn-primary" id="login-btn">Access Dashboard</button>
+                <p id="error-msg" class="error hidden"></p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.getElementById('login-btn').addEventListener('click', login);
+        document.getElementById('pin').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') login();
+        });
+
+        function login() {
+            const pin = document.getElementById('pin').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            if (!pin) {
+                errorMsg.textContent = 'Please enter PIN';
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            fetch('/staff/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ pin: pin })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/staff';
+                } else {
+                    errorMsg.textContent = data.error || 'Invalid PIN';
+                    errorMsg.classList.remove('hidden');
+                    document.getElementById('pin').value = '';
+                }
+            })
+            .catch(error => {
+                errorMsg.textContent = 'Error: ' + error.message;
+                errorMsg.classList.remove('hidden');
+            });
+        }
+    </script>
+</body>
+</html>

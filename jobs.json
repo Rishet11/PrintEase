@@ -1,0 +1,138 @@
+[
+  {
+    "job_id": "622788e3",
+    "filename": "1769026386111_CivicSentinel_Agentic_AI_for_Delhi.pdf",
+    "filepath": "/Users/rishetmehra/Desktop/PrintEase/uploads/1769026386111_CivicSentinel_Agentic_AI_for_Delhi.pdf",
+    "page_count": 8,
+    "created_at": "2026-01-22T01:43:22.491026",
+    "settings": {
+      "color_mode": "bw",
+      "duplex": "double",
+      "copies": 1,
+      "orientation": "portrait",
+      "pages_per_sheet": 1
+    },
+    "amount": 12,
+    "utr": "",
+    "status": "pending"
+  },
+  {
+    "job_id": "2ba1d2db",
+    "filename": "1769026552710_aadhar_hack.pdf",
+    "filepath": "/Users/rishetmehra/Desktop/PrintEase/uploads/1769026552710_aadhar_hack.pdf",
+    "page_count": 70,
+    "created_at": "2026-01-22T01:45:55.748874",
+    "settings": {
+      "color_mode": "bw",
+      "duplex": "single",
+      "copies": 1,
+      "orientation": "portrait",
+      "pages_per_sheet": 1
+    },
+    "amount": 140,
+    "utr": "",
+    "status": "pending"
+  },
+  {
+    "job_id": "99a9418e",
+    "filename": "1769026832077_CivicSentinel_Agentic_AI_for_Delhi.pdf",
+    "filepath": "/Users/rishetmehra/Desktop/PrintEase/uploads/1769026832077_CivicSentinel_Agentic_AI_for_Delhi.pdf",
+    "page_count": 8,
+    "created_at": "2026-01-22T01:50:34.409323",
+    "settings": {
+      "color_mode": "bw",
+      "duplex": "single",
+      "copies": 1,
+      "orientation": "portrait",
+      "pages_per_sheet": 1
+    },
+    "amount": 16,
+    "utr": "",
+    "status": "pending"
+  },
+  {
+    "job_id": "e50fd326",
+    "filename": "1769026888611_202600360_-_RSFI_ANNUAL_REGN_2026-27.pdf",
+    "filepath": "/Users/rishetmehra/Desktop/PrintEase/uploads/1769026888611_202600360_-_RSFI_ANNUAL_REGN_2026-27.pdf",
+    "page_count": 1,
+    "created_at": "2026-01-22T01:51:33.349155",
+    "settings": {
+      "color_mode": "bw",
+      "duplex": "single",
+      "copies": 1,
+      "orientation": "portrait",
+      "pages_per_sheet": 1
+    },
+    "amount": 2,
+    "utr": "",
+    "status": "pending"
+  },
+  {
+    "job_id": "6da5db5c",
+    "filename": "1769027930935_Adobe_Scan_1_Nov_2025.pdf",
+    "filepath": "/Users/rishetmehra/Desktop/PrintEase/uploads/1769027930935_Adobe_Scan_1_Nov_2025.pdf",
+    "page_count": 5,
+    "created_at": "2026-01-22T02:08:54.101246",
+    "settings": {
+      "color_mode": "bw",
+      "duplex": "single",
+      "copies": 1,
+      "orientation": "portrait",
+      "pages_per_sheet": 1
+    },
+    "amount": 10,
+    "utr": "",
+    "status": "pending"
+  },
+  {
+    "job_id": "de2fdcf7",
+    "filename": "1769028026158_Adobe_Scan_22_Jan_2026.pdf",
+    "filepath": "/Users/rishetmehra/Desktop/PrintEase/uploads/1769028026158_Adobe_Scan_22_Jan_2026.pdf",
+    "page_count": 3,
+    "created_at": "2026-01-22T02:10:29.057297",
+    "settings": {
+      "color_mode": "bw",
+      "duplex": "single",
+      "copies": 1,
+      "orientation": "portrait",
+      "pages_per_sheet": 1
+    },
+    "amount": 6,
+    "utr": "",
+    "status": "pending"
+  },
+  {
+    "job_id": "03e24ea6",
+    "filename": "1769028113147_Balanced_Career_Roadmap.pdf",
+    "filepath": "/Users/rishetmehra/Desktop/PrintEase/uploads/1769028113147_Balanced_Career_Roadmap.pdf",
+    "page_count": 5,
+    "created_at": "2026-01-22T02:11:56.617891",
+    "settings": {
+      "color_mode": "bw",
+      "duplex": "single",
+      "copies": 1,
+      "orientation": "portrait",
+      "pages_per_sheet": 1
+    },
+    "amount": 10,
+    "utr": "",
+    "status": "pending"
+  },
+  {
+    "job_id": "7e216113",
+    "filename": "1769028442032_Metro_Discharge_Summary.pdf",
+    "filepath": "/Users/rishetmehra/Desktop/PrintEase/uploads/1769028442032_Metro_Discharge_Summary.pdf",
+    "page_count": 3,
+    "created_at": "2026-01-22T02:17:24.878776",
+    "settings": {
+      "color_mode": "bw",
+      "duplex": "single",
+      "copies": 1,
+      "orientation": "portrait",
+      "pages_per_sheet": 1
+    },
+    "amount": 6,
+    "utr": "",
+    "status": "pending"
+  }
+]

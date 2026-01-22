@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintEase - Quick Print Service</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖨️ PrintEase</h1>
+            <p>Upload, Pay, Collect - No Queue!</p>
+        </header>
+
+        <!-- Step 1: File Upload -->
+        <section id="upload-section" class="step active">
+            <h2>Step 1: Upload PDF</h2>
+            <div class="upload-area" id="upload-area">
+                <input type="file" id="file-input" accept=".pdf" hidden>
+                <div class="upload-content">
+                    <span class="upload-icon">📄</span>
+                    <p>Click or drag PDF here</p>
+                    <small>Max 10MB</small>
+                </div>
+            </div>
+            <div id="file-info" class="file-info hidden">
+                <p><strong>File:</strong> <span id="file-name"></span></p>
+                <p><strong>Pages:</strong> <span id="page-count"></span></p>
+            </div>
+            <div id="upload-error" class="error hidden"></div>
+        </section>
+
+        <!-- Step 2: Print Settings -->
+        <section id="settings-section" class="step hidden">
+            <h2>Step 2: Print Settings</h2>
+            <form id="settings-form">
+                <div class="form-group">
+                    <label>Color Mode</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="color_mode" value="bw" checked>
+                            <span>Black & White (₹2/page)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="color_mode" value="color">
+                            <span>Color (₹10/page)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Print Type</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="duplex" value="single" checked>
+                            <span>Single-sided</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="duplex" value="double">
+                            <span>Double-sided (20% off)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="copies">Number of Copies</label>
+                    <input type="number" id="copies" name="copies" value="1" min="1" max="50">
+                </div>
+
+                <div class="form-group">
+                    <label>Orientation</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="orientation" value="portrait" checked>
+                            <span>Portrait</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="orientation" value="landscape">
+                            <span>Landscape</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pages_per_sheet">Pages per Sheet</label>
+                    <select id="pages_per_sheet" name="pages_per_sheet">
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+
+                <div class="price-display">
+                    <span>Total Price:</span>
+                    <span id="total-price">₹0</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="pay-btn">Proceed to Payment</button>
+            </form>
+        </section>
+
+        <!-- Loading Overlay -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

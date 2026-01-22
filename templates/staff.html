@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - PrintEase</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Print Queue</h1>
+            <p>Pending Jobs: {{ jobs|length }}</p>
+        </header>
+
+        {% if jobs %}
+            <div class="jobs-list">
+                {% for job in jobs %}
+                <div class="job-card" id="job-{{ job.job_id }}">
+                    <div class="job-header">
+                        <h3>{{ job.filename }}</h3>
+                        <span class="job-id">ID: {{ job.job_id }}</span>
+                    </div>
+                    
+                    <div class="job-details">
+                        <p><strong>Pages:</strong> {{ job.page_count }}</p>
+                        <p><strong>Color:</strong> {{ job.settings.color_mode|upper }}</p>
+                        <p><strong>Copies:</strong> {{ job.settings.copies }}</p>
+                        <p><strong>Duplex:</strong> {{ 'Yes' if job.settings.duplex == 'double' else 'No' }}</p>
+                        <p class="job-amount"><strong>Amount:</strong> ₹{{ job.amount }}</p>
+                        {% if job.utr %}
+                        <p><strong>UTR:</strong> {{ job.utr }}</p>
+                        {% endif %}
+                        <p class="job-time">Submitted: {{ job.created_at.split('T')[0] }} {{ job.created_at.split('T')[1][:8] }}</p>
+                    </div>
+
+                    <button class="btn btn-primary approve-btn" data-job-id="{{ job.job_id }}">
+                        Approve & Print
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <section class="step active">
+                <div class="empty-state">
+                    <p>✅ No pending jobs</p>
+                    <p class="instruction">Jobs will appear here when students mark payments as completed.</p>
+                </div>
+            </section>
+        {% endif %}
+
+        <div class="staff-actions">
+            <button class="btn btn-secondary" onclick="location.reload()">Refresh</button>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.approve-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const jobId = this.dataset.jobId;
+                
+                if (!confirm('Verify payment received in UPI app before approving!')) {
+                    return;
+                }
+
+                this.disabled = true;
+                this.textContent = 'Processing...';
+
+                fetch(`/staff/approve/${jobId}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const card = document.getElementById(`job-${jobId}`);
+                        card.style.background = '#f0fdf4';
+                        card.innerHTML = '<p class="success-message">✅ Print job sent successfully</p>';
+                        setTimeout(() => card.remove(), 2000);
+                    } else {
+                        alert('Error: ' + data.error);
+                        this.disabled = false;
+                        this.textContent = 'Approve & Print';
+                    }
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                    this.disabled = false;
+                    this.textContent = 'Approve & Print';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

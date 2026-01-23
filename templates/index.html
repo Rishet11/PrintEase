@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PrintEase - Quick Print Service</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>🖨️ PrintEase</h1>
-            <p>Upload, Pay, Collect - No Queue!</p>
+            <p>Upload, Pay, Print - Instantly!</p>
         </header>
 
         <!-- Step 1: File Upload -->
@@ -100,13 +101,26 @@
             </form>
         </section>
 
+        <!-- Success Message -->
+        <section id="success-section" class="step hidden">
+            <div class="success-message">
+                <h2>✅ Payment Successful!</h2>
+                <p>Your document is being printed.</p>
+                <p>Please collect it from the printer.</p>
+                <button class="btn btn-primary" onclick="location.reload()">Print Another Document</button>
+            </div>
+        </section>
+
         <!-- Loading Overlay -->
         <div id="loading" class="loading hidden">
             <div class="spinner"></div>
-            <p>Processing...</p>
+            <p id="loading-text">Processing...</p>
         </div>
     </div>
 
+    <script>
+        const RAZORPAY_KEY_ID = "{{ razorpay_key_id }}";
+    </script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

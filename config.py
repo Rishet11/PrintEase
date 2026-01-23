@@ -17,20 +17,17 @@ SESSION_COOKIE_SECURE = IS_PRODUCTION  # HTTPS only in production
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 
-# UPI Configuration
-UPI_ID = os.getenv('UPI_ID', 'printshop@upi')
-UPI_NAME = os.getenv('UPI_NAME', 'College Print Shop')
+# Razorpay Configuration
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', '')
 
-# Staff Access (optional PIN)
-STAFF_PIN = os.getenv('STAFF_PIN', '')  # Leave empty to disable PIN
+if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
+    raise ValueError("RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be set!")
 
 # File Upload Configuration
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 MAX_FILE_SIZE_MB = 10
 ALLOWED_EXTENSIONS = {'pdf'}
-
-# Job Queue Storage
-JOBS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'jobs.json')
 
 # Pricing Configuration (in Rupees)
 PRICE_BW_PER_PAGE = 2

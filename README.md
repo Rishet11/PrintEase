@@ -1,132 +1,126 @@
-# PrintEase - College Print Shop Automation
+# PrintEase - Automated Print Service
 
-A simple Flask-based system for college print shops that eliminates queues through UPI payment verification and automatic printing.
+PrintEase is a fully automated print service system that allows students to upload PDFs, pay via Razorpay, and get their documents printed automatically - no manual verification needed.
 
 ## Features
 
-✅ **Student Side**
-- PDF upload (drag-and-drop, max 10MB)
-- Print settings (color/B&W, duplex, copies, orientation, pages per sheet)
-- UPI payment via QR code
-- No account needed
-
-✅ **Staff Side**
-- Simple approval dashboard
-- Manual payment verification
-- One-click print approval
-- Optional PIN protection
-
-✅ **Auto-Print**
-- Prints automatically after staff approval
-- Supports macOS, Windows, Linux
-- Auto-deletes files after printing
-
-## Quick Start
-
-### 1. Install
-
-```bash
-cd PrintEase
-python3 -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 2. Configure
-
-```bash
-cp .env.example .env
-nano .env
-```
-
-Set your UPI details:
-```
-UPI_ID=yourshop@paytm
-UPI_NAME=College Print Shop
-STAFF_PIN=1234
-SECRET_KEY=your-random-secret
-```
-
-### 3. Run
-
-```bash
-python app.py
-```
-
-Access at: `http://localhost:5001`
+- **Instant Upload**: Upload PDF files up to 10MB
+- **Flexible Print Settings**: Choose color mode, duplex, copies, orientation, and pages per sheet
+- **Automated Payment**: Pay via UPI, cards, wallets, or net banking through Razorpay
+- **Automatic Printing**: Documents print immediately after successful payment verification
+- **Mobile-Friendly**: Works seamlessly on iOS and Android devices
 
 ## How It Works
 
-### Student Flow
-1. Upload PDF
-2. Select print settings
-3. See UPI QR code + amount
-4. Pay using any UPI app
-5. Click "I have paid"
-6. Wait for staff approval
+1. **Student uploads PDF** and selects print settings
+2. **System calculates total** based on settings and page count
+3. **Razorpay checkout opens** for payment (UPI, GPay, PhonePe, Paytm, Cards)
+4. **After successful payment**, signature is verified
+5. **Document automatically prints** to the configured printer
+6. **File is deleted** after printing for privacy
 
-### Staff Flow
-1. Access `/staff` with PIN
-2. See pending jobs
-3. Verify payment in UPI app
-4. Click "Approve & Print"
-5. Document prints automatically
+## Tech Stack
 
-## Pricing
+- **Backend**: Flask (Python)
+- **Payment Gateway**: Razorpay
+- **PDF Processing**: PyPDF2
+- **OS-Level Printing**: System print commands
 
-Configure in `config.py`:
-- B&W: ₹2/page (default)
-- Color: ₹10/page (default)
-- Double-sided: 20% discount
+## Installation
 
-## Local Network Access
+### Prerequisites
 
-Find your IP:
-```bash
-ipconfig getifaddr en0  # macOS
-# Example: 192.168.1.100
+- Python 3.11+
+- A Razorpay account ([Sign up for test mode](https://dashboard.razorpay.com/signup))
+
+### Setup Steps
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Rishet11/PrintEase.git
+   cd PrintEase
+   ```
+
+2. **Create virtual environment**:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configure environment variables**:
+   - Copy `.env.example` to `.env`:
+     ```bash
+     cp .env.example .env
+     ```
+   - Edit `.env` and add your Razorpay test credentials:
+     ```
+     RAZORPAY_KEY_ID=rzp_test_YOUR_KEY_ID
+     RAZORPAY_KEY_SECRET=YOUR_KEY_SECRET
+     SECRET_KEY=your-random-secret-key
+     ```
+
+5. **Run the application**:
+   ```bash
+   python app.py
+   ```
+
+6. **Access the app**:
+   - Open browser to `http://localhost:5001`
+   - On mobile (same network): `http://YOUR_COMPUTER_IP:5001`
+
+## Getting Razorpay Test Keys
+
+1. Go to [Razorpay Dashboard](https://dashboard.razorpay.com/)
+2. Sign up or log in
+3. Switch to **Test Mode** (toggle in top navigation)
+4. Go to **Settings** → **API Keys**
+5. Generate test keys
+6. Copy Key ID and Key Secret to your `.env` file
+
+## Testing Payments
+
+In test mode, use these credentials:
+
+**Test UPI**:
+- UPI ID: `success@razorpay`
+
+**Test Cards**:
+- Card Number: `4111 1111 1111 1111`
+- CVV: Any 3 digits
+- Expiry: Any future date
+
+## Pricing Configuration
+
+Edit `config.py` to change prices:
+
+```python
+PRICE_BW_PER_PAGE = 2      # ₹2 per B&W page
+PRICE_COLOR_PER_PAGE = 10  # ₹10 per color page
+DUPLEX_DISCOUNT = 0.20     # 20% off for double-sided
 ```
 
-Students access: `http://192.168.1.100:5001`
+## Deployment
 
-## Project Structure
+**Recommended for Physical Printing:**
+- **[Deploy with Cloudflare Tunnel](DEPLOY_CLOUDFLARE.md)** (Best reliability)
+- **[Other Alternatives](DEPLOY_ALTERNATIVES.md)** (ngrok, zrok, Pinggy, etc.)
 
-```
-PrintEase/
-├── app.py              # Flask application
-├── config.py           # Settings
-├── jobs.json          # Job queue (auto-created)
-├── requirements.txt    # Dependencies
-├── utils/
-│   ├── file_handler.py
-│   ├── job_queue.py
-│   ├── upi_generator.py
-│   └── printer.py
-├── templates/
-│   ├── index.html
-│   ├── payment_upi.html
-│   ├── staff_login.html
-│   └── staff.html
-└── static/
-    ├── css/style.css
-    └── js/main.js
-```
+**Cloud Hosting (No Physical Printing):**
+- [Deploy to Railway](DEPLOY_RAILWAY.md)
+- [Deploy to Render](DEPLOY_RENDER.md)
 
-## Requirements
+## Security Notes
 
-- Python 3.8+
-- Configured default printer
-- UPI account
-
-## Why Manual UPI Instead of Razorpay?
-
-✅ No API keys needed  
-✅ No monthly fees  
-✅ Works on local network  
-✅ Direct printer access  
-✅ Simple architecture  
-✅ Staff has full control  
+- Always use HTTPS in production
+- Keep your Razorpay secret key secure
+- Switch to live mode only after thorough testing
+- Files are automatically deleted after printing
 
 ## License
 
-Built for college print shops to reduce queues and manual file handling.
+MIT License - See LICENSE file for details

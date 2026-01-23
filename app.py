@@ -1,8 +1,9 @@
 import os
 import logging
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session
+import razorpay
 import config
-from utils import file_handler, printer, job_queue, upi_generator
+from utils import file_handler, printer
 
 app = Flask(__name__)
 
@@ -25,6 +26,9 @@ else:
 app.secret_key = config.SECRET_KEY
 app.config['MAX_CONTENT_LENGTH'] = config.MAX_FILE_SIZE_MB * 1024 * 1024
 
+# Initialize Razorpay client
+razorpay_client = razorpay.Client(auth=(config.RAZORPAY_KEY_ID, config.RAZORPAY_KEY_SECRET))
+
 # Ensure folders exist
 os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
 
@@ -32,7 +36,7 @@ os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
 @app.route('/')
 def index():
     """Student upload portal."""
-    return render_template('index.html')
+    return render_template('index.html', razorpay_key_id=config.RAZORPAY_KEY_ID)
 
 
 @app.route('/upload', methods=['POST'])
@@ -71,9 +75,9 @@ def upload_file():
     })
 
 
-@app.route('/create-job', methods=['POST'])
-def create_job():
-    """Create print job and show UPI payment."""
+@app.route('/create-order', methods=['POST'])
+def create_order():
+    """Create Razorpay order for payment."""
     if 'filepath' not in session:
         return jsonify({'success': False, 'error': 'No file uploaded'}), 400
     
@@ -97,134 +101,105 @@ def create_job():
         settings['copies']
     )
     
-    # Create job
-    job_id = job_queue.create_job(
-        filepath=session['filepath'],
-        filename=session['filename'],
-        page_count=page_count,
-        settings=settings,
-        amount=total_price
-    )
+    # Store settings in session for later
+    session['settings'] = settings
+    session['amount'] = total_price
     
-    # Clear session
-    session.clear()
-    
-    return jsonify({
-        'success': True,
-        'job_id': job_id
-    })
-
-
-@app.route('/payment/<job_id>')
-def payment_page(job_id):
-    """Show UPI payment page."""
-    job = job_queue.get_job(job_id)
-    
-    if not job:
-        return "Job not found", 404
-    
-    # Generate UPI QR code
-    qr_code = upi_generator.generate_upi_qr(
-        upi_id=config.UPI_ID,
-        amount=job['amount'],
-        payee_name=config.UPI_NAME,
-        transaction_note=f"PrintJob_{job_id}"
-    )
-    
-    return render_template('payment_upi.html', 
-                         job=job, 
-                         qr_code=qr_code,
-                         upi_id=config.UPI_ID,
-                         config=config)
-
-
-@app.route('/mark-paid/<job_id>', methods=['POST'])
-def mark_paid(job_id):
-    """Student marks payment as completed."""
-    data = request.json
-    utr = data.get('utr', '')
-    
-    job = job_queue.get_job(job_id)
-    if not job:
-        return jsonify({'success': False, 'error': 'Job not found'}), 404
-    
-    # Update UTR if provided
-    if utr:
-        jobs = job_queue._load_jobs()
-        for j in jobs:
-            if j['job_id'] == job_id:
-                j['utr'] = utr
-                job_queue._save_jobs(jobs)
-                break
-    
-    return jsonify({
-        'success': True,
-        'message': 'Payment confirmation received. Please wait for staff approval.'
-    })
-
-
-@app.route('/staff')
-def staff_page():
-    """Staff verification page."""
-    # Check if PIN is required
-    if config.STAFF_PIN and not session.get('staff_authenticated'):
-        return render_template('staff_login.html')
-    
-    # Get pending jobs
-    pending_jobs = job_queue.get_pending_jobs()
-    
-    return render_template('staff.html', jobs=pending_jobs)
-
-
-@app.route('/staff/login', methods=['POST'])
-def staff_login():
-    """Verify staff PIN."""
-    if not config.STAFF_PIN:
-        session['staff_authenticated'] = True
-        return jsonify({'success': True})
-    
-    pin = request.json.get('pin', '')
-    
-    if pin == config.STAFF_PIN:
-        session['staff_authenticated'] = True
-        return jsonify({'success': True})
-    else:
-        return jsonify({'success': False, 'error': 'Invalid PIN'}), 401
-
-
-@app.route('/staff/approve/<job_id>', methods=['POST'])
-def approve_and_print(job_id):
-    """Approve job and trigger printing."""
-    # Check authentication
-    if config.STAFF_PIN and not session.get('staff_authenticated'):
-        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
-    
-    job = job_queue.get_job(job_id)
-    if not job:
-        return jsonify({'success': False, 'error': 'Job not found'}), 404
-    
-    # Mark as approved
-    job_queue.approve_job(job_id)
-    
-    # Print document
-    print_success, print_message = printer.print_document(job['filepath'], job['settings'])
-    
-    if print_success:
-        # Mark as printed
-        job_queue.mark_printed(job_id)
+    try:
+        # Create Razorpay order
+        order_data = {
+            'amount': int(total_price * 100),  # Convert to paise
+            'currency': 'INR',
+            'payment_capture': 1  # Auto-capture payment
+        }
         
-        # Delete file
-        file_handler.delete_file(job['filepath'])
+        razorpay_order = razorpay_client.order.create(data=order_data)
         
         return jsonify({
             'success': True,
-            'message': 'Print job sent successfully'
+            'order_id': razorpay_order['id'],
+            'amount': total_price,
+            'currency': 'INR'
         })
-    else:
-        return jsonify({
-            'success': False,
-            'error': f'Print failed: {print_message}'
-        }), 500
+    
+    except Exception as e:
+        logging.error(f"Error creating Razorpay order: {e}")
+        return jsonify({'success': False, 'error': 'Failed to create payment order'}), 500
+
+
+@app.route('/verify-payment', methods=['POST'])
+def verify_payment():
+    """Verify Razorpay payment signature and trigger printing."""
+    if 'filepath' not in session:
+        return jsonify({'success': False, 'error': 'Session expired'}), 400
+    
+    data = request.json
+    razorpay_order_id = data.get('razorpay_order_id')
+    razorpay_payment_id = data.get('razorpay_payment_id')
+    razorpay_signature = data.get('razorpay_signature')
+    
+    if not all([razorpay_order_id, razorpay_payment_id, razorpay_signature]):
+        return jsonify({'success': False, 'error': 'Missing payment details'}), 400
+    
+    try:
+        # Verify signature
+        params_dict = {
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_signature': razorpay_signature
+        }
+        
+        razorpay_client.utility.verify_payment_signature(params_dict)
+        
+        # Signature verified - proceed with printing
+        filepath = session.get('filepath')
+        settings = session.get('settings')
+        filename = session.get('filename')
+        
+        # Print document
+        print_success, print_message = printer.print_document(filepath, settings)
+        
+        if print_success:
+            # Delete file after successful print
+            file_handler.delete_file(filepath)
+            
+            # Clear session
+            session.clear()
+            
+            logging.info(f"Print job successful for {filename} - Payment ID: {razorpay_payment_id}")
+            
+            return jsonify({
+                'success': True,
+                'message': 'Payment verified! Your document is being printed.'
+            })
+        else:
+            # Even if print fails, delete file and clear session
+            file_handler.delete_file(filepath)
+            session.clear()
+            
+            logging.error(f"Print failed for {filename}: {print_message}")
+            return jsonify({
+                'success': False,
+                'error': f'Print failed: {print_message}'
+            }), 500
+    
+    except razorpay.errors.SignatureVerificationError:
+        # Invalid signature - delete file
+        if 'filepath' in session:
+            file_handler.delete_file(session['filepath'])
+        session.clear()
+        
+        logging.warning(f"Invalid payment signature - Order: {razorpay_order_id}")
+        return jsonify({'success': False, 'error': 'Payment verification failed'}), 400
+    
+    except Exception as e:
+        # Any other error - cleanup
+        if 'filepath' in session:
+            file_handler.delete_file(session['filepath'])
+        session.clear()
+        
+        logging.error(f"Error during payment verification: {e}")
+        return jsonify({'success': False, 'error': 'Payment processing error'}), 500
 
 
 @app.errorhandler(500)

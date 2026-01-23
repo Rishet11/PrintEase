@@ -1,38 +1,43 @@
-PrintEase - Ultra Quick Setup
-=============================
+QUICK START GUIDE
+=================
 
-1. INSTALL PYTHON
-   - Download: python.org/downloads
-   - Install with "Add to PATH" checked
+1. SETUP
+--------
+- Install Python 3.11+
+- Get Razorpay test keys from: https://dashboard.razorpay.com/
+- Copy .env.example to .env
+- Add your Razorpay credentials to .env
 
-2. SETUP
-   cd PrintEase
-   python -m venv venv
-   
-   # Windows:
-   venv\Scripts\activate
-   
-   # Mac/Linux:
-   source venv/bin/activate
-   
-   pip install -r requirements.txt
+2. INSTALL
+----------
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
 
 3. CONFIGURE
-   - Copy .env.example to .env
-   - Edit .env with shop's UPI ID and name
-   
-4. SET DEFAULT PRINTER
-   - Windows: Settings → Printers → Set default
-   - Mac: System Settings → Printers → Set default
+------------
+Edit .env file:
+RAZORPAY_KEY_ID=rzp_test_YOUR_KEY_ID
+RAZORPAY_KEY_SECRET=YOUR_KEY_SECRET
+SECRET_KEY=random-secret-key
 
-5. RUN
-   python app.py
-   
-6. SHARE
-   - Find computer's IP (ipconfig on Windows, ifconfig on Mac)
-   - Students go to: http://YOUR_IP:5001
-   - Staff go to: http://YOUR_IP:5001/staff
+4. RUN
+------
+python app.py
 
-DONE! 🎉
+5. ACCESS
+---------
+Desktop: http://localhost:5001
+Mobile: http://YOUR_IP:5001
 
-Questions? Check SETUP_GUIDE.md for detailed instructions.
+6. TEST PAYMENT
+---------------
+Use Razorpay test credentials:
+- UPI: success@razorpay
+- Card: 4111 1111 1111 1111
+
+7. FLOW
+-------
+Upload PDF → Select Settings → Pay via Razorpay → Auto Print → Done!
+
+SUPPORT: Check README.md for detailed setup

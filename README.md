@@ -123,4 +123,4 @@ DUPLEX_DISCOUNT = 0.20     # 20% off for double-sided
 
 ## License
 
-MIT License - See LICENSE file for details
+MIT License. See [LICENSE](LICENSE) for the full text.

@@ -135,3 +135,11 @@ python app.py
 
 The application listens on port `5001` by default. Keep the `.env` file out of
 version control and use Razorpay test credentials while developing.
+
+## Troubleshooting
+
+- If uploads fail, confirm the file is a PDF and is below the 10MB limit.
+- If payments do not open, verify both Razorpay keys are present in `.env` and
+  that the dashboard is in the same mode as the credentials.
+- If printing fails, check that the target printer is available to the operating
+  system and review the configured printer settings in `config.py`.

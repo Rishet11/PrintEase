@@ -124,3 +124,14 @@ DUPLEX_DISCOUNT = 0.20     # 20% off for double-sided
 ## License
 
 MIT License. See [LICENSE](LICENSE) for the full text.
+
+## Local Development
+
+Run the Flask development server with:
+
+```bash
+python app.py
+```
+
+The application listens on port `5001` by default. Keep the `.env` file out of
+version control and use Razorpay test credentials while developing.

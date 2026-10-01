@@ -32,6 +32,15 @@ PrintEase is a fully automated print service system that allows students to uplo
 
 - Python 3.11+
 - A Razorpay account ([Sign up for test mode](https://dashboard.razorpay.com/signup))
+- A printer configured on the machine that runs PrintEase
+
+### Printer Setup
+
+PrintEase sends jobs through the operating system's default printer. Before accepting payments, verify that the server can print a test PDF:
+
+- **Linux**: Install and configure CUPS so the `lp` command is available and a default printer is set.
+- **macOS**: Configure a default printer; PrintEase uses the built-in `lpr` command.
+- **Windows**: Install the `pywin32` package (`pip install pywin32`) and configure a default printer.
 
 ### Setup Steps
 

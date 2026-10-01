@@ -79,8 +79,9 @@ PrintEase sends jobs through the operating system's default printer. Before acce
    ```
 
 6. **Access the app**:
-   - Open browser to `http://localhost:5001`
-   - On mobile (same network): `http://YOUR_COMPUTER_IP:5001`
+   - By default, open `http://localhost:5001`.
+   - If you use the provided `.env` file, it sets `PORT=10000`; open `http://localhost:10000` instead.
+   - On mobile (same network), replace `localhost` with your computer's IP address and use the same port.
 
 ## Getting Razorpay Test Keys
 
